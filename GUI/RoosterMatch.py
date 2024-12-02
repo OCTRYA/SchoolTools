@@ -4,31 +4,31 @@ import xml.etree.ElementTree as ET
 from tkinter import *
 
 
-class MainOverviewPage(tk.Frame):
+class RoosterMatch(tk.Frame):
     def __init__(self,parent,controller):
         tk.Frame.__init__(self,parent)
         self.controller = controller.controller
         self.toegevoegdeLeerkachten = []
         self.label = tk.Label(self,text="RoosterMatch", font=self.controller.getTitleFont())
-        self.label.grid(row=0, padx=10,pady=10)
+        self.label.grid(row=0, columnspan=4, padx=10,pady=10)
         self.labelLeerkrachtZoekvenster = tk.Label(self, text="Zoek een of meerdere collega's via hun naam", font=self.controller.getCustomFont())
-        self.labelLeerkrachtZoekvenster.grid(row=1, column=0)
+        self.labelLeerkrachtZoekvenster.grid(row=1, column=0, columnspan=3,)
         self.tekstveldLeerkrachtZoekvenster = tk.Entry(self, font=self.controller.getTitleFont())
-        self.tekstveldLeerkrachtZoekvenster.grid(row=1, column=1)
-        self.voegLeerkrachtToeKnop = tk.Button(self, text="Voeg leekracht toe", command = self.voegLeerkrachtToeAanZoeklijst)
-        self.voegLeerkrachtToeKnop.grid(row=1, column=4)
+        self.tekstveldLeerkrachtZoekvenster.grid(row=1, column=3,columnspan=3,)
+        self.voegLeerkrachtToeKnop = tk.Button(self, text="Voeg leerkracht toe", command = self.voegLeerkrachtToeAanZoeklijst)
+        self.voegLeerkrachtToeKnop.grid(row=1, column=7)
         self.lijst_van_leerkrachten = tk.Listbox(self, width=50)
-        self.lijst_van_leerkrachten.grid(row=3, column=0, rowspan=4, columnspan=1)
+        self.lijst_van_leerkrachten.grid(row=3, column=0, rowspan=4, columnspan=3)
         self.updateList(self.controller.planner.leerkrachten)
         # toon de selectie in de lijstbox bij onclick
         self.lijst_van_leerkrachten.bind("<<ListboxSelect>>", self.vulTekstveldLeerkrachtZoekventser)
         self.tekstveldLeerkrachtZoekvenster.bind("<KeyRelease>",self.checkInLijst_van_Leerkrachten)
         self.lijst_van_toegevoegde_leerkrachten = tk.Listbox(self, width=50)
-        self.lijst_van_toegevoegde_leerkrachten.grid(row=3, column=1, rowspan=8, columnspan=1)
+        self.lijst_van_toegevoegde_leerkrachten.grid(row=3, column=3, rowspan=4, columnspan=3)
         self.genereerRoosterKnop = tk.Button(self, text="Genereer rooster", command = self.toonRooster)
-        self.genereerRoosterKnop.grid(row=12, column=0)
-        self.verwijderLeerkrachtKnop = tk.Button(self, text="Verwijder leekracht", command = self.verwijderLeerkrachtUitZoeklijst)
-        self.verwijderLeerkrachtKnop.grid(row=3, column=4)
+        self.genereerRoosterKnop.grid(row=12, column=2)
+        self.verwijderLeerkrachtKnop = tk.Button(self, text="Verwijder leerkracht", command = self.verwijderLeerkrachtUitZoeklijst)
+        self.verwijderLeerkrachtKnop.grid(row=3, column=7)
 
     def updateList(self, data):
         #Clear the listbox
@@ -90,4 +90,4 @@ class MainOverviewPage(tk.Frame):
         for i in range(10):
             for j in range(6):
                 self.label = tk.Label(self, text=rooster[i][j], font=self.controller.getCustomFont())
-                self.label.grid(row=12+i, column=j, padx=10, pady=10)
+                self.label.grid(row=13+i, column=j, padx=10, pady=10)
