@@ -22,7 +22,7 @@ class SSZIP(tk.Frame):
         # Run the Tkinter event loop
 
         # Open the image vesalius file
-        self.image = Image.open(self.resource_path("Images/VesaliusLogo.png"))
+        self.image = Image.open(self.resource_path(os.path.join("Images","VesaliusLogo.png")))
         self.image = self.image.resize((80, 50))
         # Convert the Image object into a Tkinter-compatible object
         self.tk_image = ImageTk.PhotoImage(self.image)
@@ -32,7 +32,7 @@ class SSZIP(tk.Frame):
         self.labelVesalius.grid(row=5)
 
         # Open the image DOS file
-        self.imageDos = Image.open(self.resource_path("Images/dos.png"))
+        self.imageDos = Image.open(self.resource_path(os.path.join("Images","dos.png")))
         self.imageDos = self.imageDos.resize((80, 80))
         # Convert the Image object into a Tkinter-compatible object
         self.tk1_image = ImageTk.PhotoImage(self.imageDos)

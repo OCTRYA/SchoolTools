@@ -1,4 +1,5 @@
 import os
+import sys
 from tkinter import font
 
 from bs4 import BeautifulSoup
@@ -38,7 +39,7 @@ class ApplicationController:
         # Reading the data inside the xml
         # file to a variable under the name
         # data    def read_xml_file(self, file):
-        with open('Data/untis.xml', 'r') as f:
+        with open(self.resource_path(os.path.join("Data","untis.xml")), 'r') as f:
             data = f.read()
 
         # Passing the stored data inside
@@ -68,3 +69,10 @@ class ApplicationController:
                     les.momenten.append(Moment(int(moment.find("assigned_day").text),int(moment.find("assigned_period").text)))
                 self.planner.lessen.append(les)
 
+    def resource_path(self, relative_path):
+        try:
+            base_path = sys._MEIPASS
+        except Exception:
+            base_path = os.path.abspath(".")
+
+        return os.path.join(base_path, relative_path)
