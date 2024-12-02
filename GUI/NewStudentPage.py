@@ -1,7 +1,14 @@
 import os
 import tkinter as tk
 import xml.etree.cElementTree as ET
-from tkinter import ttk, messagebox
+from tkinter import ttk, messagebox, filedialog
+import sys
+import zipfile
+import os
+import time
+import shutil
+from PIL import Image, ImageTk
+from pip._internal.utils.unpacking import unzip_file
 
 
 class NewStudentPage(tk.Frame):
@@ -9,56 +16,95 @@ class NewStudentPage(tk.Frame):
         self.__controller = controller.controller
         tk.Frame.__init__(self, parent, width=1000, height=1000, padx=20, pady=20)
 
-        self.label = ttk.Label(self, text="Add a new Student", font=self.__controller.getTitleFont())
-        self.label.grid(row=0)
+        # Create a button to select a file
+        select_button = tk.Button(self, text="Open Zipbestand...", bg="#006082", fg="white", command=self.select_file)
+        select_button.grid(row = 0, pady=20)
+        # Run the Tkinter event loop
 
-        self.first_name_label = ttk.Label(self, text="First name:")
-        self.first_name_label.grid(row=1, column=0, sticky="w")
-        self.first_name_entry = ttk.Entry(self)
-        self.first_name_entry.grid(row=1, column=1)
+        # Open the image vesalius file
+        image = Image.open(self.resource_path("Images/VesaliusLogo.png"))
+        image = image.resize((80, 50))
+        # Convert the Image object into a Tkinter-compatible object
+        tk_image = ImageTk.PhotoImage(image)
 
-        self.last_name_label = ttk.Label(self, text="Last name:")
-        self.last_name_label.grid(row=2, column=0, sticky="w")
-        self.last_name_entry = ttk.Entry(self)
-        self.last_name_entry.grid(row=2, column=1)
+        # Create a label widget to display the image
+        labelVesalius = tk.Label(self, image=tk_image, bg="white")
+        labelVesalius.place(x=0, y=50)
+        labelVesalius.grid(row=5)
 
-        self.age_label = ttk.Label(self, text="Birthday:")
-        self.age_label.grid(row=3, column=0, sticky="w")
-        self.age_entry = ttk.Entry(self)
-        self.age_entry.grid(row=3, column=1)
+        # Open the image DOS file
+        imageDos = Image.open(self.resource_path("Images/dos.png"))
+        imageDos = imageDos.resize((80, 80))
+        # Convert the Image object into a Tkinter-compatible object
+        tk1_image = ImageTk.PhotoImage(imageDos)
 
-        self.email_label = ttk.Label(self, text="Email:")
-        self.email_label.grid(row=4, column=0, sticky="w")
-        self.email_entry = ttk.Entry(self)
-        self.email_entry.grid(row=4, column=1)
+        # Create a label widget to display the image
+        labelDos = tk.Label(self, image=tk1_image, bg="white")
+        labelDos.grid(row=10)
 
-        self.telephone_label = ttk.Label(self, text="Telephone:")
-        self.telephone_label.grid(row=5, column=0, sticky="w")
-        self.telephone_entry = ttk.Entry(self)
-        self.telephone_entry.grid(row=5, column=1)
+    def resource_path(self, relative_path):
+        try:
+            base_path = sys._MEIPASS
+        except Exception:
+            base_path = os.path.abspath(".")
 
-        self.streetname_label = ttk.Label(self, text="Street name:")
-        self.streetname_label.grid(row=6, column=0, sticky="w")
-        self.streetname_entry = ttk.Entry(self)
-        self.streetname_entry.grid(row=6, column=1)
+        return os.path.join(base_path, relative_path)
+    def select_file(self):
+        global file_path
+        file_path = filedialog.askopenfilename()
+        if file_path:
+            print("Selected file:", file_path)
+            self.makeDirectoryFromZippedFile()
+        else:
+            print("No file selected.")
 
-        self.housenumber_label = ttk.Label(self, text="housenumber:")
-        self.housenumber_label.grid(row=7, column=0, sticky="w")
-        self.housenumber_entry = ttk.Entry(self)
-        self.housenumber_entry.grid(row=7, column=1)
+    def makeDirectoryFromZippedFile(self):
+        # make directory name based on zipped file_path name
+        global file_path
+        extract_to = file_path[:-4]
+        print("De bestanden worden gekopieerd naar " + extract_to + ".")
+        print("...")
+        time.sleep(0)
+        # Make sure the extraction directory exists
+        os.makedirs(extract_to, exist_ok=True)
+        unzip_file(file_path, extract_to)
+        self.copy_folders_to_higher_directory(extract_to + "/" + os.path.basename(os.path.normpath(extract_to)), extract_to)
+        # Unzip the file
+        shutil.rmtree(extract_to + "/" + os.path.basename(os.path.normpath(extract_to)))
+    def copy_folders_to_higher_directory(self, src_dir, dest_dir):
+        # Ensure the destination directory exists
+        os.makedirs(dest_dir, exist_ok=True)
+        print("bronmap:" + src_dir)
+        print("doelmap:" + dest_dir)
+        # Traverse the source directory
+        print(os.walk(src_dir))
+        for root, dirs, files in os.walk(src_dir):
+            for file in files:
+                # Get the absolute path of the current file
+                filePath = os.path.join(root, file)
 
-        self.zipcode_label = ttk.Label(self, text="zipcode:")
-        self.zipcode_label.grid(row=8, column=0, sticky="w")
-        self.zipcode_entry = ttk.Entry(self)
-        self.zipcode_entry.grid(row=8, column=1)
+                # Get the name of the parent folder
+                parent_folder = os.path.basename(root)
 
-        self.city_label = ttk.Label(self, text="city:")
-        self.city_label.grid(row=9, column=0, sticky="w")
-        self.city_entry = ttk.Entry(self)
-        self.city_entry.grid(row=9, column=1)
+                # Construct the destination file path with the parent folder name and unique identifier
+                dest_file_path = os.path.join(dest_dir, f"{parent_folder}_{file}")
 
-        self.submit_button = ttk.Button(self, text="Make new Student", command=lambda: self.submit_form())
-        self.submit_button.grid(row=10, column=1,columnspan=2)
+                # Copy the file to the destination directory
+                shutil.copy2(filePath, dest_file_path)
+    def makeDirectoryFromZippedFile(self):
+        # make directory name based on zipped file_path name
+        global file_path
+        extract_to = file_path[:-4]
+        print("De bestanden worden gekopieerd naar " + extract_to + ".")
+        print("...")
+        time.sleep(0)
+        # Make sure the extraction directory exists
+        os.makedirs(extract_to, exist_ok=True)
+        unzip_file(file_path, extract_to)
+        self.copy_folders_to_higher_directory(extract_to + "/" + os.path.basename(os.path.normpath(extract_to)), extract_to)
+        # Unzip the file
+        shutil.rmtree(extract_to + "/" + os.path.basename(os.path.normpath(extract_to)))
+
 
     def submit_form(self):
 
@@ -74,6 +120,7 @@ class NewStudentPage(tk.Frame):
         self.city_entry.delete(0, tk.END)
         self.telephone_entry.delete(0, tk.END)
         self.email_entry.delete(0, tk.END)
+
 
     #create student file
     def createStudentFile(self, students_root_location):

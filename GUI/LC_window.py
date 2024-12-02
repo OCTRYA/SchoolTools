@@ -20,7 +20,7 @@ class LC_window(tk.Tk):
         algemeenmenu = tk.Menu(menubar, tearoff=1)
         smartschoolmenu = tk.Menu(menubar, tearoff=2)
         algemeenmenu.add_command(label="RoosterMatch", command=lambda: self.show_frame(RoosterMatch.RoosterMatch))
-        #filemenu.add_command(label="New Student", command=lambda: self.show_frame(NewStudentPage.NewStudentPage))
+        filemenu.add_command(label="New Student", command=lambda: self.show_frame(NewStudentPage.NewStudentPage))
         #filemenu.add_command(label="Manage Courses", command=lambda: self.show_frame(ManageCoursesPage.ManageCoursesPage))
         #filemenu.add_command(label="Save", command=donothing)
         #filemenu.add_command(label="Save as...", command=donothing)
